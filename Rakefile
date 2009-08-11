@@ -3,10 +3,14 @@
 require 'rubygems'
 require 'hoe'
 
-Hoe.spec 'csvscan' do
-  # developer('FIX', 'FIX@example.com')
+class CSVScan
+  VERSION = "0.1.0"
+end
 
-  # self.rubyforge_name = 'csvscanx' # if different than 'csvscan'
+Hoe.spec 'csvscan' do
+  developer('Ben Sandofsky', 'sandofsky@gmail.com')
+  spec_extras[:extensions] = "ext/csvscan/extconf.rb"
+  clean_globs << "ext/csvscan/csvscan.*" << "ext/csvscan/*.o" << "ext/Makefile"
 end
 
 # vim: syntax=ruby

@@ -121,7 +121,7 @@ class ConfigTable
   def load_savefile
     begin
       File.foreach(savefile()) do |line|
-        k, v = *line.split(/=/, 2)
+        k, v = *line.split( /=/, 2)
         self[k] = v.strip
       end
     rescue Errno::ENOENT
@@ -190,7 +190,7 @@ class ConfigTable
     }
 
     if arg = c['configure_args'].split.detect {|arg| /--with-make-prog=/ =~ arg }
-      makeprog = arg.sub(/'/, '').split(/=/, 2)[1]
+      makeprog = arg.sub(/'/, '').split( /=/, 2)[1]
     else
       makeprog = 'make'
     end
@@ -780,7 +780,7 @@ class ToplevelInstaller
   def ToplevelInstaller.load_rbconfig
     if arg = ARGV.detect {|arg| /\A--rbconfig=/ =~ arg }
       ARGV.delete(arg)
-      load File.expand_path(arg.split(/=/, 2)[1])
+      load File.expand_path(arg.split( /=/, 2)[1])
       $".push 'rbconfig.rb'
     else
       require 'rbconfig'
@@ -936,7 +936,7 @@ class ToplevelInstaller
       when '--no-harm'
         @config.no_harm = true
       when /\A--prefix=/
-        path = a.split(/=/, 2)[1]
+        path = a.split( /=/, 2)[1]
         path = File.expand_path(path) unless path[0,1] == '/'
         @config.install_prefix = path
       else

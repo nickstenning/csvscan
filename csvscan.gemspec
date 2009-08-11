@@ -1,6 +1,3 @@
-(in /Users/ben/Documents/csvscan)
-# -*- encoding: utf-8 -*-
-
 Gem::Specification.new do |s|
   s.name = %q{csvscan}
   s.version = "0.1.0"

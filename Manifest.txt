@@ -5,3 +5,8 @@ ext/csvscan/csvscan.c
 ext/csvscan/csvscan.rl
 ext/csvscan/extconf.rb
 setup.rb
+.autotest
+History.txt
+Manifest.txt
+Rakefile
+test/test_csvscan.rb

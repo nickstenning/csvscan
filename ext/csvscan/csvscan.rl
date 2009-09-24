@@ -10,8 +10,8 @@ static ID s_read, s_to_str;
     newline = ('\r\n' | '\n') @{
         curline += 1;
     };
-    Separator = ',';
-    UnQuotedValue = [^ \t",\r\n] [^",\r\n]*;
+    Separator = '|';
+    UnQuotedValue = [^ \t"\|\r\n] [^"\|\r\n]*;
     QuotedChar = ( '""' | [^"] | newline );
     QuotedValue = '"' . QuotedChar* . '"';
     

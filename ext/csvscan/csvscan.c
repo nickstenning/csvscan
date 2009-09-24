@@ -9,9 +9,60 @@ static ID s_read, s_to_str;
 
 
 #line 12 "csvscan.c"
-static const int csv_scan_start = 2;
+static const char _csv_scan_actions[] = {
+	0, 1, 0, 1, 4, 1, 9, 1, 
+	11, 1, 12, 1, 13, 1, 14, 2, 
+	2, 3, 2, 5, 6, 2, 5, 7, 
+	2, 5, 8, 3, 0, 1, 10, 3, 
+	9, 0, 1
+};
 
-static const int csv_scan_error = 1;
+static const char _csv_scan_key_offsets[] = {
+	0, 0, 2, 10, 14, 15
+};
+
+static const unsigned char _csv_scan_trans_keys[] = {
+	10u, 34u, 9u, 10u, 13u, 32u, 34u, 124u, 
+	11u, 12u, 10u, 13u, 34u, 124u, 10u, 34u, 
+	0
+};
+
+static const char _csv_scan_single_lengths[] = {
+	0, 2, 6, 4, 1, 1
+};
+
+static const char _csv_scan_range_lengths[] = {
+	0, 0, 1, 0, 0, 0
+};
+
+static const char _csv_scan_index_offsets[] = {
+	0, 0, 3, 11, 16, 18
+};
+
+static const char _csv_scan_trans_targs_wi[] = {
+	1, 5, 1, 2, 2, 4, 2, 1, 
+	2, 3, 3, 2, 2, 2, 2, 3, 
+	2, 2, 1, 2, 0
+};
+
+static const char _csv_scan_trans_actions_wi[] = {
+	1, 24, 0, 5, 31, 0, 5, 0, 
+	7, 18, 21, 13, 13, 13, 13, 21, 
+	27, 9, 0, 11, 0
+};
+
+static const char _csv_scan_to_state_actions[] = {
+	0, 0, 15, 0, 0, 0
+};
+
+static const char _csv_scan_from_state_actions[] = {
+	0, 0, 3, 0, 0, 0
+};
+
+static const int csv_scan_start = 2;
+static const int csv_scan_error = 0;
+
+static const int csv_scan_en_main = 2;
 
 #line 73 "csvscan.rl"
 
@@ -43,7 +94,7 @@ VALUE csv_scan(VALUE self, VALUE port) {
     buf = ALLOC_N(unsigned char, buffer_size);
 
     
-#line 47 "csvscan.c"
+#line 98 "csvscan.c"
 	{
 	cs = csv_scan_start;
 	tokstart = 0;
@@ -83,21 +134,98 @@ VALUE csv_scan(VALUE self, VALUE port) {
 
         pe = p + len;
         
-#line 87 "csvscan.c"
+#line 138 "csvscan.c"
 	{
+	int _klen;
+	unsigned int _trans;
+	const char *_acts;
+	unsigned int _nacts;
+	const unsigned char *_keys;
+
 	if ( p == pe )
 		goto _out;
-	switch ( cs )
+	if ( cs == 0 )
+		goto _out;
+_resume:
+	_acts = _csv_scan_actions + _csv_scan_from_state_actions[cs];
+	_nacts = (unsigned int) *_acts++;
+	while ( _nacts-- > 0 ) {
+		switch ( *_acts++ ) {
+	case 4:
+#line 1 "csvscan.rl"
+	{tokstart = p;}
+	break;
+#line 159 "csvscan.c"
+		}
+	}
+
+	_keys = _csv_scan_trans_keys + _csv_scan_key_offsets[cs];
+	_trans = _csv_scan_index_offsets[cs];
+
+	_klen = _csv_scan_single_lengths[cs];
+	if ( _klen > 0 ) {
+		const unsigned char *_lower = _keys;
+		const unsigned char *_mid;
+		const unsigned char *_upper = _keys + _klen - 1;
+		while (1) {
+			if ( _upper < _lower )
+				break;
+
+			_mid = _lower + ((_upper-_lower) >> 1);
+			if ( (*p) < *_mid )
+				_upper = _mid - 1;
+			else if ( (*p) > *_mid )
+				_lower = _mid + 1;
+			else {
+				_trans += (_mid - _keys);
+				goto _match;
+			}
+		}
+		_keys += _klen;
+		_trans += _klen;
+	}
+
+	_klen = _csv_scan_range_lengths[cs];
+	if ( _klen > 0 ) {
+		const unsigned char *_lower = _keys;
+		const unsigned char *_mid;
+		const unsigned char *_upper = _keys + (_klen<<1) - 2;
+		while (1) {
+			if ( _upper < _lower )
+				break;
+
+			_mid = _lower + (((_upper-_lower) >> 1) & ~1);
+			if ( (*p) < _mid[0] )
+				_upper = _mid - 2;
+			else if ( (*p) > _mid[1] )
+				_lower = _mid + 2;
+			else {
+				_trans += ((_mid - _keys)>>1);
+				goto _match;
+			}
+		}
+		_trans += _klen;
+	}
+
+_match:
+	cs = _csv_scan_trans_targs_wi[_trans];
+
+	if ( _csv_scan_trans_actions_wi[_trans] == 0 )
+		goto _again;
+
+	_acts = _csv_scan_actions + _csv_scan_trans_actions_wi[_trans];
+	_nacts = (unsigned int) *_acts++;
+	while ( _nacts-- > 0 )
 	{
-tr0:
-#line 19 "csvscan.rl"
-	{tokend = p;{p = ((tokend))-1;}}
-	goto st2;
-tr1:
+		switch ( *_acts++ )
+		{
+	case 0:
 #line 10 "csvscan.rl"
 	{
         curline += 1;
     }
+	break;
+	case 1:
 #line 20 "csvscan.rl"
 	{
           rb_ary_push(row, coldata);
@@ -105,12 +233,45 @@ tr1:
           coldata = Qnil;
           row = rb_ary_new();
       }
-#line 20 "csvscan.rl"
-	{tokend = p+1;{p = ((tokend))-1;}}
-	goto st2;
-tr2:
+	break;
+	case 5:
+#line 1 "csvscan.rl"
+	{tokend = p+1;}
+	break;
+	case 6:
+#line 19 "csvscan.rl"
+	{act = 1;}
+	break;
+	case 7:
+#line 30 "csvscan.rl"
+	{act = 4;}
+	break;
+	case 8:
 #line 49 "csvscan.rl"
-	{tokend = p;{
+	{act = 5;}
+	break;
+	case 9:
+#line 19 "csvscan.rl"
+	{tokend = p+1;}
+	break;
+	case 10:
+#line 25 "csvscan.rl"
+	{tokend = p+1;}
+	break;
+	case 11:
+#line 26 "csvscan.rl"
+	{tokend = p+1;{
+          rb_ary_push(row, coldata);
+          coldata = Qnil;
+      }}
+	break;
+	case 12:
+#line 19 "csvscan.rl"
+	{tokend = p;p--;}
+	break;
+	case 13:
+#line 49 "csvscan.rl"
+	{tokend = p;p--;{
           unsigned char ch, *start_p, *wptr, *rptr;
           int rest, datalen;
           start_p = wptr = tokstart;
@@ -128,14 +289,16 @@ tr2:
               rest--;
           }
           coldata = rb_str_new( start_p, datalen );
-      }{p = ((tokend))-1;}}
-	goto st2;
-tr5:
+      }}
+	break;
+	case 14:
 #line 1 "csvscan.rl"
 	{	switch( act ) {
-	case 0: tokend = tokstart; {goto st1;}
+	case 0:
+	{{cs = 0; goto _again;}}
+	break;
 	case 4:
-	{
+	{{p = ((tokend))-1;}
           unsigned char ch, *endp;
           int datalen;
           datalen = tokend - tokstart;
@@ -156,7 +319,7 @@ tr5:
       }
 	break;
 	case 5:
-	{
+	{{p = ((tokend))-1;}
           unsigned char ch, *start_p, *wptr, *rptr;
           int rest, datalen;
           start_p = wptr = tokstart;
@@ -178,127 +341,33 @@ tr5:
 	break;
 	default: break;
 	}
-	{p = ((tokend))-1;}}
-	goto st2;
-tr6:
-#line 19 "csvscan.rl"
-	{tokend = p+1;{p = ((tokend))-1;}}
-	goto st2;
-tr7:
-#line 19 "csvscan.rl"
-	{tokend = p+1;{p = ((tokend))-1;}}
-#line 10 "csvscan.rl"
-	{
-        curline += 1;
-    }
-#line 20 "csvscan.rl"
-	{
-          rb_ary_push(row, coldata);
-          rb_yield(row);
-          coldata = Qnil;
-          row = rb_ary_new();
-      }
-	goto st2;
-tr10:
-#line 26 "csvscan.rl"
-	{tokend = p+1;{
-          rb_ary_push(row, coldata);
-          coldata = Qnil;
-      }{p = ((tokend))-1;}}
-	goto st2;
-st2:
+	}
+	break;
+#line 347 "csvscan.c"
+		}
+	}
+
+_again:
+	_acts = _csv_scan_actions + _csv_scan_to_state_actions[cs];
+	_nacts = (unsigned int) *_acts++;
+	while ( _nacts-- > 0 ) {
+		switch ( *_acts++ ) {
+	case 2:
 #line 1 "csvscan.rl"
 	{tokstart = 0;}
+	break;
+	case 3:
 #line 1 "csvscan.rl"
 	{act = 0;}
-	if ( ++p == pe )
-		goto _out2;
-case 2:
-#line 1 "csvscan.rl"
-	{tokstart = p;}
-#line 220 "csvscan.c"
-	switch( (*p) ) {
-		case 9u: goto tr6;
-		case 10u: goto tr7;
-		case 13u: goto st4;
-		case 32u: goto tr6;
-		case 34u: goto st0;
-		case 44u: goto tr10;
+	break;
+#line 364 "csvscan.c"
+		}
 	}
-	if ( 11u <= (*p) && (*p) <= 12u )
-		goto tr8;
-	goto tr4;
-tr4:
-#line 1 "csvscan.rl"
-	{tokend = p+1;}
-#line 30 "csvscan.rl"
-	{act = 4;}
-	goto st3;
-tr8:
-#line 1 "csvscan.rl"
-	{tokend = p+1;}
-#line 19 "csvscan.rl"
-	{act = 1;}
-	goto st3;
-st3:
-	if ( ++p == pe )
-		goto _out3;
-case 3:
-#line 248 "csvscan.c"
-	switch( (*p) ) {
-		case 10u: goto tr5;
-		case 13u: goto tr5;
-		case 34u: goto tr5;
-		case 44u: goto tr5;
-	}
-	goto tr4;
-st4:
-	if ( ++p == pe )
-		goto _out4;
-case 4:
-	if ( (*p) == 10u )
-		goto tr1;
-	goto tr0;
-tr11:
-#line 10 "csvscan.rl"
-	{
-        curline += 1;
-    }
-	goto st0;
-st0:
-	if ( ++p == pe )
-		goto _out0;
-case 0:
-#line 273 "csvscan.c"
-	switch( (*p) ) {
-		case 10u: goto tr11;
-		case 34u: goto tr12;
-	}
-	goto st0;
-tr12:
-#line 1 "csvscan.rl"
-	{tokend = p+1;}
-#line 49 "csvscan.rl"
-	{act = 5;}
-	goto st5;
-st5:
-	if ( ++p == pe )
-		goto _out5;
-case 5:
-#line 289 "csvscan.c"
-	if ( (*p) == 34u )
-		goto st0;
-	goto tr2;
-st1:
-	goto _out1;
-	}
-	_out2: cs = 2; goto _out; 
-	_out3: cs = 3; goto _out; 
-	_out4: cs = 4; goto _out; 
-	_out0: cs = 0; goto _out; 
-	_out5: cs = 5; goto _out; 
-	_out1: cs = 1; goto _out; 
 
+	if ( cs == 0 )
+		goto _out;
+	if ( ++p != pe )
+		goto _resume;
 	_out: {}
 	}
 #line 134 "csvscan.rl"
